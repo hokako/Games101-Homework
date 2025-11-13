@@ -1,0 +1,3 @@
+/home/hoka/Cpp/Games101 homework/Assignment1/build/CMakeFiles/Rasterizer1.dir
+/home/hoka/Cpp/Games101 homework/Assignment1/build/CMakeFiles/edit_cache.dir
+/home/hoka/Cpp/Games101 homework/Assignment1/build/CMakeFiles/rebuild_cache.dir
