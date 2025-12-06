@@ -1,3 +1,0 @@
-/home/hoka/Cpp/Games101 homework/Assignment0/build/CMakeFiles/Transformation.dir
-/home/hoka/Cpp/Games101 homework/Assignment0/build/CMakeFiles/edit_cache.dir
-/home/hoka/Cpp/Games101 homework/Assignment0/build/CMakeFiles/rebuild_cache.dir
