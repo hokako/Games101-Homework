@@ -11,8 +11,10 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
     Eigen::Matrix4f view = Eigen::Matrix4f::Identity();
 
     Eigen::Matrix4f translate;
-    translate << 1, 0, 0, -eye_pos[0], 0, 1, 0, -eye_pos[1], 0, 0, 1,
-        -eye_pos[2], 0, 0, 0, 1;
+    translate << 1, 0, 0, -eye_pos[0],
+                 0, 1, 0, -eye_pos[1],
+                 0, 0, 1, -eye_pos[2],
+                 0, 0, 0, 1;
 
     view = translate * view;
 
@@ -22,17 +24,16 @@ Eigen::Matrix4f get_view_matrix(Eigen::Vector3f eye_pos)
 Eigen::Matrix4f get_model_matrix(float rotation_angle)
 {
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
-
     // TODO: Implement this function
     // Create the model matrix for rotating the triangle around the Z axis.
     // Then return it.
     double theta = rotation_angle / 180.0 * MY_PI;
-    Eigen::Matrix4f mrot;
-    mrot << cos(theta), -sin(theta), 0, 0,
-            sin(theta),  cos(theta), 0, 0,
-                     0,           0, 1, 0,
-                     0,           0, 0, 1;
-    model = mrot * model;
+    Eigen::Matrix4f mr;
+    mr << cos(theta), -sin(theta), 0, 0,
+          sin(theta), cos(theta), 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1;
+    model = mr * model;
     return model;
 }
 
@@ -46,34 +47,38 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     // TODO: Implement this function
     // Create the projection matrix for the given parameters.
     // Then return it.
-    float theta = eye_fov / 180.0 * MY_PI;
-    float t = zNear * tan(theta / 2);
-    float r = t * aspect_ratio;
-    float l = -r;
+    float rad = eye_fov / 180.0 * MY_PI;
+    float t = std::tan(rad/2.0f) * std::abs(zNear);
     float b = -t;
+    float r = aspect_ratio * t;
+    float l = -r;
 
-    Eigen::Matrix4f mOrthoTranslate;
-    mOrthoTranslate << 1, 0, 0, -(r+l)/2,
-                       0, 1, 0, -(t+b)/2,
-                       0, 0, 1, -(zNear+zFar)/2,
-                       0, 0, 0, 1;
-    Eigen::Matrix4f mOrthoScale;
-    mOrthoScale << 2/(r-l),0,0,0,
-                    0,2/(t-b),0,0,
-                    0,0,2/(zFar - zNear),0,
-                    0,0,0,1;
-    Eigen::Matrix4f mPersp2ortho;
-    mPersp2ortho << zNear, 0, 0, 0,
+    Eigen::Matrix4f persp2ortho;
+    persp2ortho << zNear, 0, 0, 0,
                     0, zNear, 0, 0,
                     0, 0, zNear + zFar, -zNear * zFar,
                     0, 0, 1, 0;
-    Eigen::Matrix4f mT;
-    mT<<1, 0, 0, 0, 
-         0, 1, 0, 0,
-         0, 0, -1, 0,
-         0, 0, 0, 1;
-    mPersp2ortho = mPersp2ortho * mT;
-    projection = mOrthoScale*mOrthoTranslate*mPersp2ortho*projection;
+
+    Eigen::Matrix4f scale;
+    scale << 2/(r-l), 0, 0, 0,
+              0, 2/(t-b), 0, 0,
+              0, 0, 2/(zNear-zFar), 0,
+              0, 0, 0, 1;
+    
+    Eigen::Matrix4f translate;
+    translate << 1, 0, 0, -(r+l)/2.0f,
+                 0, 1, 0, -(t+b)/2.0f,
+                 0, 0, 1, -(zNear+zFar)/2.0f,
+                 0, 0, 0, 1;
+    
+    Eigen::Matrix4f mt;
+    mt << 1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, -1, 0,
+          0, 0, 0, 1;
+    persp2ortho = persp2ortho * mt;
+
+    projection = scale * translate * persp2ortho * projection;
     return projection;
 }
 

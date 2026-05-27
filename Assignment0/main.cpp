@@ -4,12 +4,12 @@
 #include<iostream>
 
 int main(){
-    Eigen::Vector3f p(2.0f,1.0f,1.0f);
+    Eigen::Vector3f p(2.0f, 1.0f, 1.0f);
     Eigen::Matrix3f mr;
-    double theta = 45.0/180.0 * M_PI; // 45 degree
-    mr << cos(theta), -sin(theta), 1.0,
-          sin(theta),  cos(theta), 2.0,
-                 0.0,        0.0, 1.0;
+    double theta = 45.0/180.0 * M_PI;
+    mr << std::cos(theta), -std::sin(theta), 1.0f,
+          std::sin(theta),  std::cos(theta), 2.0f,
+                         0.0f,             0.0f, 1.0f;
     std::cout<<"Origin Point: \n"<<p<<std::endl;
     std::cout<<"Rotation+Translation Matrix: \n"<<mr<<std::endl;
     std::cout<<"Transformed Point: \n"<<mr*p<<std::endl;

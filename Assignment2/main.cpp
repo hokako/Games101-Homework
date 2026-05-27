@@ -32,33 +32,39 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float z
 {
     // TODO: Copy-paste your implementation from the previous assignment.
     Eigen::Matrix4f projection;
-    float theta = eye_fov / 180.0 * MY_PI;
-    float t = zNear * tan(theta / 2);
-    float r = t * aspect_ratio;
-    float l = -r;
+
+    float rad = eye_fov / 180.0 * MY_PI;
+    float t = std::tan(rad/2.0f) * std::abs(zNear);
     float b = -t;
-    Eigen::Matrix4f mOrthoTranslate;
-    mOrthoTranslate << 1, 0, 0, -(r+l)/2,
-                       0, 1, 0, -(t+b)/2,
-                       0, 0, 1, -(zNear+zFar)/2,
-                       0, 0, 0, 1;
-    Eigen::Matrix4f mOrthoScale;
-    mOrthoScale << 2/(r-l),0,0,0,
-                    0,2/(t-b),0,0,
-                    0,0,2/(zFar - zNear),0,
-                    0,0,0,1;
-    Eigen::Matrix4f mPersp2ortho;
-    mPersp2ortho << zNear, 0, 0, 0,
+    float r = aspect_ratio * t;
+    float l = -r;
+
+    Eigen::Matrix4f persp2ortho;
+    persp2ortho << zNear, 0, 0, 0,
                     0, zNear, 0, 0,
                     0, 0, zNear + zFar, -zNear * zFar,
                     0, 0, 1, 0;
-    Eigen::Matrix4f mT;
-    mT<<1, 0, 0, 0,
-         0, 1, 0, 0,
-         0, 0, -1, 0,
-         0, 0, 0, 1;
-    mPersp2ortho = mPersp2ortho * mT;
-    projection = mOrthoScale*mOrthoTranslate*mPersp2ortho*projection;
+
+    Eigen::Matrix4f scale;
+    scale << 2/(r-l), 0, 0, 0,
+              0, 2/(t-b), 0, 0,
+              0, 0, - 2/(zNear-zFar), 0,
+              0, 0, 0, 1;
+    
+    Eigen::Matrix4f translate;
+    translate << 1, 0, 0, -(r+l)/2.0f,
+                 0, 1, 0, -(t+b)/2.0f,
+                 0, 0, 1, -(zNear+zFar)/2.0f,
+                 0, 0, 0, 1;
+    
+    Eigen::Matrix4f mt;
+    mt << 1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, -1, 0,
+          0, 0, 0, 1;
+    persp2ortho = persp2ortho * mt;
+
+    projection = scale * translate * persp2ortho;
     return projection;
 }
 
